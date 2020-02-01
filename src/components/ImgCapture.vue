@@ -84,6 +84,8 @@
         const constraints = {
           // video: true,
           video: {
+            height: 2160,
+            aspectRatio: 1920/1080,
             deviceId: {exact: this.videoDeviceId}
           },
           audio: false,
@@ -94,6 +96,7 @@
       gotMedia(stream) {
         console.log("Opened stream");
         this.stream = stream
+        this.stream.getTracks().forEach(track => console.log(track, track.getCapabilities()));
       },
       capturePreview() {
         console.log('snap');
