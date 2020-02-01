@@ -40,12 +40,12 @@
             done: true
           },
           {
-            desc: 'Deal with device rotation',
+            desc: 'High res images',
             current: true
           },
           {
-            desc: 'High res images',
-          }
+            desc: 'Deal with device rotation (looks like there is no rotation?)',
+          },
         ],
         imgs: []
       };
@@ -56,13 +56,9 @@
         this.$refs.imgCapture.startCapture();
       },
       addPhoto(data) {
-        this.imgs.unshift({key: new Date, src: data});
+        this.imgs.unshift({key: new Date().toString(), src: data});
       }
     },
-    mounted() {
-      // console.warn("Might want to remove this eventually.");
-      // this.showCapture();
-    }
   };
 </script>
 

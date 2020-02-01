@@ -103,6 +103,14 @@
         let context = canvas.getContext('2d');
         context.drawImage(this.$refs.video, 0, 0, this.stats.width, this.stats.height);
         this.previewData = canvas.toDataURL('image/png');
+        this.$loadImage(this.previewData,
+            function(img, data) {
+              console.log('loadedImage', img, data);
+            },
+            {
+              meta: true
+            }
+        )
       },
       acceptPreview() {
         this.$emit('photo', this.previewData);

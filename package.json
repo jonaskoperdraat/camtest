@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "blueimp-load-image": "^2.26.0",
     "core-js": "^3.4.4",
     "vue": "^2.6.10",
     "webrtc-adapter": "^7.5.0"
