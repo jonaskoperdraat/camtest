@@ -61,18 +61,21 @@
           return;
         }
 
+
         console.log("navigator.mediaDevices", navigator.mediaDevices);
         navigator.mediaDevices.enumerateDevices().then(info => {
           console.log('enumerate devices', info);
-          self.videoDevices = info.filter(device => device.kind === 'videoinput')
+          self.videoDevices = info.filter(device => device.kind === 'videoinput');
           console.log('available video devices', self.videoDevices);
-          self.videoDeviceId = self.videoDevices[0].deviceId;
+          self.videoDeviceId = this.videoDeviceId = window.localStorage.getItem('ImgCapture.videoDeviceId') ||
+              self.videoDevices[0].deviceId;
           console.log('select default device', self.deviceId);
           self.showFeed();
         });
       },
       showFeed() {
         this.stop();
+        window.localStorage.setItem('ImgCapture.videoDeviceId', this.videoDeviceId);
         navigator.mediaDevices
             .getUserMedia(this.getConstraints())
             .then(this.gotMedia)
@@ -159,11 +162,9 @@
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: rgb(0, 0, 0);
     background-color: rgba(0, 0, 0, 0.9);
 
     .controls {
-      border: 1px solid yellow;
       background-color: rgb(255, 255, 255, .75);
       width: 15%;
       height: 100%;
@@ -196,7 +197,6 @@
     }
 
     .preview {
-      border: 1px solid lime;
       display: none
     }
 
