@@ -1,19 +1,18 @@
 <template>
   <div id="app">
     <h3>Image capturing</h3>
-    <img-capture ref="imgCapture"></img-capture>
+    <img-capture ref="imgCapture" @photo="addPhoto"></img-capture>
     <button @click="showCapture">Start capture</button>
+    <h3>Captured images</h3>
+    {{imgs.length === 0 ? '-' : ''}}
+    <img v-for="img in imgs" v-bind:src="img.src" v-bind:key="img.key" :alt="img.key">
     <div class="todo">
-      <h3> &#9745; Todo</h3>
+      <h3>&#9745; Todo</h3>
       <ul>
-        <li class="done">Access camera device</li>
-        <li>High res images</li>
-        <li class="current">Capture images</li>
-        <li>Switch camera input</li>
-        <li>Deal with device rotation</li>
+        <li v-for="task in todo" v-bind:key="task.desc" :class="{done: task.done, current: task.current}">{{task.desc}}</li>
       </ul>
     </div>
-    <!-- <img v-for="img in imgs" v-bind:src="img.src"> -->
+
   </div>
 </template>
 
@@ -27,6 +26,27 @@
     },
     data() {
       return {
+        todo: [
+          {
+            desc: 'Access camera device',
+            done: true
+          },
+          {
+            desc: 'Capture images',
+            done: true
+          },
+          {
+            desc: 'Switch camera input',
+            done: true
+          },
+          {
+            desc: 'Deal with device rotation',
+            current: true
+          },
+          {
+            desc: 'High res images',
+          }
+        ],
         imgs: []
       };
     },
@@ -34,11 +54,14 @@
       showCapture() {
         console.log("showCapture");
         this.$refs.imgCapture.startCapture();
+      },
+      addPhoto(data) {
+        this.imgs.unshift({key: new Date, src: data});
       }
     },
     mounted() {
-      console.warn("Might want to remove this eventually.");
-      this.showCapture();
+      // console.warn("Might want to remove this eventually.");
+      // this.showCapture();
     }
   };
 </script>
@@ -56,12 +79,12 @@
   .todo {
     text-align: center;
     margin: 0 auto;
-    border: 1px solid red;
 
     ul {
       display: inline-block;
       text-align: left;
       padding: 0;
+      margin-top: 0;
     }
 
     li {
@@ -74,7 +97,7 @@
     }
 
     li.done:before {
-        content: '\2611  ';
+      content: '\2611  ';
     }
 
     .current {

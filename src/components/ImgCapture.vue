@@ -1,26 +1,27 @@
 <template>
   <div>
     <div id="container" class="overlay" v-show="active">
-      <div class="overlay-content">
-        <canvas ref="canvas"></canvas>
+      <div class="overlay-content" :class="{previewing: previewing}">
+        <img v-show="previewing" v-bind:src="previewData" id="preview" alt="Camera capture preview"/>
+
         <video autoplay :src-object.prop.camel="stream"
                @loadedmetadata="loadedMetaData"
                ref="video"></video>
-        <div class="preview" v-show="previewing" v-cloak>
-          <img id="preview" alt="Camera capture preview"/>
-        </div>
         <div class="controls">
-          <select v-model="videoDeviceId" @change="showFeed">
+          <button @click="close" class="close-btn">Close</button>
+          <select v-model="videoDeviceId" @change="showFeed" v-if="!previewing">
             <option v-for="device in videoDevices" v-bind:value="device.deviceId" v-bind:key="device.deviceId">
               {{device.label}}
             </option>
           </select>
-          <button @click="capturePreview">Take picture</button>
-          <button @click="close" class="close-btn">Close</button>
+          <button @click="capturePreview" v-if="!previewing">Take picture</button>
+          <button @click="dismissPreview" v-if="previewing">Dismiss</button>
+          <button @click="acceptPreview" v-if="previewing">Accept</button>
         </div>
         <div class="stats">
           width: {{stats.width}}<br/>
-          height: {{stats.height}}
+          height: {{stats.height}}<br />
+          previewing: {{!!previewData}}
         </div>
       </div>
     </div>
@@ -39,8 +40,13 @@
           width: null,
           height: null
         },
-        previewing: false
+        previewData: null
       };
+    },
+    computed: {
+      previewing() {
+        return !!this.previewData;
+      }
     },
     methods: {
       startCapture() {
@@ -91,10 +97,24 @@
       },
       capturePreview() {
         console.log('snap');
-        let context = this.$refs.canvas.getContext('2d');
-        console.log(context);
+        const canvas = document.createElement('canvas');
+        canvas.width = this.stats.width;
+        canvas.height = this.stats.height;
+        let context = canvas.getContext('2d');
+        context.drawImage(this.$refs.video, 0, 0, this.stats.width, this.stats.height);
+        this.previewData = canvas.toDataURL('image/png');
+      },
+      acceptPreview() {
+        this.$emit('photo', this.previewData);
+        this.previewData = null;
+        this.stop();
+        this.active = false;
+      },
+      dismissPreview() {
+        this.previewData = null;
       },
       stop() {
+        console.log('stop');
         if (this.stream) {
           console.log('Stopping current stream');
           this.stream.getTracks().forEach(track => track.stop());
@@ -104,7 +124,7 @@
       close() {
         console.log('close');
         this.active = false;
-        stop();
+        this.stop();
       },
       loadedMetaData(meta) {
         console.log('loadedMetaData', meta);
@@ -151,7 +171,7 @@
     }
 
 
-    video {
+    video, #preview {
       object-fit: contain;
       width: 100%;
       height: 100%;
@@ -160,12 +180,17 @@
       left: 0;
     }
 
+    .preview {
+      border: 1px solid lime;
+      display: none
+    }
+
   }
 
-  /*button:hover {*/
-  /*  cursor: pointer;*/
-    /*cursor: crosshair;*/
-  /*}*/
-
+  .overlay-content.previewing {
+    video {
+      display: none
+    }
+  }
 
 </style>
