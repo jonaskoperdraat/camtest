@@ -1,5 +1,7 @@
 # camtest
 
+A project to experiment using the [Media Capture and Streams API](https://developer.mozilla.org/en-US/docs/Web/API/Media_Streams_API) inside a Vue app.
+
 ## Project setup
 ```
 npm install

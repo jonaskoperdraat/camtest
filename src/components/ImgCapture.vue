@@ -116,7 +116,11 @@
         )
       },
       acceptPreview() {
-        this.$emit('photo', this.previewData);
+        this.$emit('photo', {
+          src: this.previewData,
+          width: this.stats.width,
+          height: this.stats.height
+        });
         this.previewData = null;
         this.stop();
         this.active = false;

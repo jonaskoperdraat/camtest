@@ -5,11 +5,18 @@
     <button @click="showCapture">Start capture</button>
     <h3>Captured images</h3>
     {{imgs.length === 0 ? '-' : ''}}
-    <img v-for="img in imgs" v-bind:src="img.src" v-bind:key="img.key" :alt="img.key">
+    <div class="gallery">
+      <div v-for="img in imgs" v-bind:key="img.key">
+        <img v-bind:src="img.src" :alt="img.key">
+        ({{img.width}} x {{img.height}})
+      </div>
+    </div>
     <div class="todo">
       <h3>&#9745; Todo</h3>
       <ul>
-        <li v-for="task in todo" v-bind:key="task.desc" :class="{done: task.done, current: task.current}">{{task.desc}}</li>
+        <li v-for="task in todo" v-bind:key="task.desc" :class="{done: task.done, current: task.current}">
+          {{task.desc}}
+        </li>
       </ul>
     </div>
 
@@ -41,10 +48,11 @@
           },
           {
             desc: 'High res images',
-            current: true
+            done: true
           },
           {
-            desc: 'Deal with device rotation (looks like there is no rotation?)',
+            desc: 'Deal with device rotation -> Copying raw stream into canvas seems to take care of the rotation issues.',
+            done: true
           },
         ],
         imgs: []
@@ -55,8 +63,8 @@
         console.log("showCapture");
         this.$refs.imgCapture.startCapture();
       },
-      addPhoto(data) {
-        this.imgs.unshift({key: new Date().toString(), src: data});
+      addPhoto(img) {
+        this.imgs.unshift({key: new Date().toString(), ...img});
       }
     },
   };
@@ -72,9 +80,16 @@
     margin-top: 60px;
   }
 
+  @media only screen and (min-width: 400px) {
+    #app {
+      width: 75%;
+      margin: 0 auto;
+    }
+  }
+
   .todo {
+    width: 100%;
     text-align: center;
-    margin: 0 auto;
 
     ul {
       display: inline-block;
@@ -99,6 +114,20 @@
     .current {
       color: red;
     }
+
   }
 
+  .gallery {
+    width: 100%;
+
+    > div {
+      width: 100%;
+      object-fit: scale-down;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  }
 </style>
